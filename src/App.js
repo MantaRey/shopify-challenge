@@ -1,23 +1,46 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import Input from './components/Input';
+import Inventory from './components/Inventory';
 
 function App() {
+  const [inventory, setInventory] = useState([]);
+  const [filteredInventory, setFilteredInventory] = useState(inventory);
+  const [status, setStatus] = useState('in-stock');
+
+  const filterHandler = () => {
+    switch (status) {
+      case 'in-stock':
+        setFilteredInventory(inventory.filter((item) => item.deleted !== true));
+        break;
+      case 'deleted':
+        setFilteredInventory(inventory.filter((item) => item.deleted === true));
+        break;
+      default:
+        setFilteredInventory(inventory);
+        break;
+    }
+  };
+
+  useEffect(() => {
+    filterHandler();
+  }, [inventory, status]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header>
+        <h1>My Inventory Tracker</h1>
       </header>
+      <Input
+        inventory={inventory}
+        setInventory={setInventory}
+        setStatus={setStatus}
+      />
+      <Inventory
+        filteredInventory={filteredInventory}
+        inventory={inventory}
+        setInventory={setInventory}
+      />
     </div>
   );
 }
